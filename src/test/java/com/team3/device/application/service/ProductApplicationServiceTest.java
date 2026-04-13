@@ -33,14 +33,12 @@ class ProductApplicationServiceTest {
 
         // given
         CreateProductRequest request = new CreateProductRequest();
-        request.setCustomerId(1L);
         request.setName("Router");
         request.setBrand("TP-Link");
         request.setPrice(BigDecimal.valueOf(100));
 
         Product savedProduct = new Product();
         savedProduct.setId(1L);
-        savedProduct.setCustomerId(1L);
         savedProduct.setName("Router");
         savedProduct.setBrand("TP-Link");
         savedProduct.setPrice(BigDecimal.valueOf(100));
@@ -59,23 +57,23 @@ class ProductApplicationServiceTest {
     }
 
     @Test
-    void createProduct_shouldReturnList() {
+    void getAllProducts_shouldReturnList() {
 
         // given
         Product product = new Product();
         product.setId(1L);
-        product.setCustomerId(1L);
         product.setName("Router");
 
-        when(productRepository.findByCustomerId(1L)).thenReturn(List.of(product));
+        when(productRepository.findAll()).thenReturn(List.of(product));
 
         // when
-        var result = productApplicationService.getProductsByCustomerId(1L);
+        var result = productApplicationService.getAllProducts();
 
         // then
         assertEquals(1, result.size());
         assertEquals(1L, result.get(0).getId());
+        assertEquals("Router", result.get(0).getName());
 
-        verify(productRepository, times(1)).findByCustomerId(1L);
+        verify(productRepository, times(1)).findAll();
     }
 }

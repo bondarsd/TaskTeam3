@@ -32,7 +32,6 @@ class ProductControllerTest {
 
         ProductResponse response = new ProductResponse(
                 1L,
-                1L,
                 "Router",
                 "TP-Link",
                 BigDecimal.valueOf(100),
@@ -48,7 +47,6 @@ class ProductControllerTest {
 
         String requestJson = """
                 {
-                    "customerId": 1,
                     "name": "Router",
                     "brand": "TP-Link",
                     "price": 100
@@ -64,10 +62,9 @@ class ProductControllerTest {
     }
 
     @Test
-    void getByCustomerId_shouldReturnList() throws Exception {
+    void getAllProducts_shouldReturnList() throws Exception {
 
         ProductResponse response = new ProductResponse(
-                1L,
                 1L,
                 "Router",
                 "TP-Link",
@@ -79,12 +76,11 @@ class ProductControllerTest {
                 null
         );
 
-        when(productApplicationService.getProductsByCustomerId(1L)).thenReturn(List.of(response));
+        when(productApplicationService.getAllProducts()).thenReturn(List.of(response));
 
-        mockMvc.perform(get("/products/customer/1"))
+        mockMvc.perform(get("/products"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(1))
                 .andExpect(jsonPath("$[0].name").value("Router"));
-
     }
 }
