@@ -5,7 +5,6 @@ import com.team3.device.web.dto.CreateProductRequest;
 import com.team3.device.web.dto.ProductResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,8 +29,8 @@ public class ProductController {
         return productApplicationService.createProduct(request);
     }
 
-    @GetMapping("/customer/{customerId}")
-    public List<ProductResponse> getProductsByCostumerId(@PathVariable Long customerId) {
-        return productApplicationService.getProductsByCustomerId(customerId);
+    @GetMapping
+    public List<ProductResponse> getAllProducts() {
+        return productApplicationService.getAllProducts();
     }
 }
