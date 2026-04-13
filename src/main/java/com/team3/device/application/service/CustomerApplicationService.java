@@ -5,6 +5,7 @@ import com.team3.device.domain.repository.CustomerRepository;
 import com.team3.device.infrastructure.persistence.repository.JpaCustomerRepository;
 import com.team3.device.web.dto.CreateCustomerRequest;
 import com.team3.device.web.dto.CustomerResponse;
+import com.team3.device.web.exception.DuplicateEmailException;
 import com.team3.device.web.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -12,12 +13,22 @@ import org.springframework.stereotype.Service;
 public class CustomerApplicationService {
 
     private final CustomerRepository repository;
+    private final JpaCustomerRepository jpaCustomerRepository;
 
-    public CustomerApplicationService(CustomerRepository repository) {
+    public CustomerApplicationService(CustomerRepository repository,
+                                      JpaCustomerRepository jpaCustomerRepository) {
         this.repository = repository;
+        this.jpaCustomerRepository = jpaCustomerRepository;
     }
 
     public CustomerResponse createCustomer(CreateCustomerRequest request) {
+
+        jpaCustomerRepository.findByEmail(request.getEmail())
+                .ifPresent(customer -> {
+                    throw new DuplicateEmailException(
+                            "Customer with email " + request.getEmail() + " already exists"
+                    );
+                });
 
         Customer customer = Customer.builder()
                 .name(request.getName())
@@ -34,9 +45,8 @@ public class CustomerApplicationService {
     }
 
     public CustomerResponse getCustomerById(Long id) {
-
         Customer customer = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Customer with id " + id + " not found"));
 
         return new CustomerResponse(
                 customer.getId(),
