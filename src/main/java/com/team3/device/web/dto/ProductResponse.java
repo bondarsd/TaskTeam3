@@ -11,8 +11,6 @@ public class ProductResponse {
 
     private Long id;
 
-    private Long customerId;
-
     private String name;
 
     private String brand;

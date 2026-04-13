@@ -22,9 +22,6 @@ public class Product {
     private Long id;
 
     @Column(nullable = false)
-    private Long customerId;
-
-    @Column(nullable = false)
     private String name;
 
     @Column(nullable = false)
@@ -42,5 +39,4 @@ public class Product {
     private Integer lanPorts;
 
     private Integer wanPorts;
-
 }

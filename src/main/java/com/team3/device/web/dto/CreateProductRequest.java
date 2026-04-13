@@ -14,9 +14,6 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class CreateProductRequest {
 
-    @NotNull
-    private Long customerId;
-
     @NotBlank
     private String name;
 
