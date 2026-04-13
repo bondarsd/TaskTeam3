@@ -3,6 +3,7 @@ package com.team3.device.web.controller;
 import com.team3.device.application.service.CustomerApplicationService;
 import com.team3.device.web.dto.CreateCustomerRequest;
 import com.team3.device.web.dto.CustomerResponse;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,7 +17,7 @@ public class CustomerController {
     }
 
     @PostMapping
-    public CustomerResponse createCustomer(@RequestBody CreateCustomerRequest request) {
+    public CustomerResponse createCustomer(@Valid @RequestBody CreateCustomerRequest request) {
         return customerApplicationService.createCustomer(request);
     }
 
