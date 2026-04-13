@@ -10,6 +10,6 @@ public interface ProductRepository {
 
     Product save(Product product);
 
-    List<Product> findByCustomerId(Long customerId);
+    List<Product> findAll();
 
 }
