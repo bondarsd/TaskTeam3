@@ -22,7 +22,6 @@ public class ProductApplicationService {
 
         Product product = new Product();
 
-        product.setCustomerId(request.getCustomerId());
         product.setName(request.getName());
         product.setBrand(request.getBrand());
         product.setPrice(request.getPrice());
@@ -36,18 +35,9 @@ public class ProductApplicationService {
         return mapToResponse(saved);
     }
 
-    public List<ProductResponse> getProductsByCustomerId(Long customerId) {
-
-        return productRepository.findByCustomerId(customerId)
-                .stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
-    }
-
     private ProductResponse mapToResponse(Product product) {
         return new ProductResponse(
                 product.getId(),
-                product.getCustomerId(),
                 product.getName(),
                 product.getBrand(),
                 product.getPrice(),
@@ -57,5 +47,12 @@ public class ProductApplicationService {
                 product.getLanPorts(),
                 product.getWanPorts()
         );
+    }
+
+    public List<ProductResponse> getAllProducts() {
+        return productRepository.findAll()
+                .stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
     }
 }
