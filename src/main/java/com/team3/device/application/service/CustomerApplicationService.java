@@ -1,6 +1,7 @@
 package com.team3.device.application.service;
 
 import com.team3.device.domain.model.Customer;
+import com.team3.device.domain.repository.CustomerRepository;
 import com.team3.device.infrastructure.persistence.repository.JpaCustomerRepository;
 import com.team3.device.web.dto.CreateCustomerRequest;
 import com.team3.device.web.dto.CustomerResponse;
@@ -10,9 +11,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class CustomerApplicationService {
 
-    private final JpaCustomerRepository repository;
+    private final CustomerRepository repository;
 
-    public CustomerApplicationService(JpaCustomerRepository repository) {
+    public CustomerApplicationService(CustomerRepository repository) {
         this.repository = repository;
     }
 
