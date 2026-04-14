@@ -3,6 +3,7 @@ package com.team3.device.application.service;
 import com.team3.device.domain.model.Product;
 import com.team3.device.domain.repository.ProductRepository;
 import com.team3.device.web.dto.CreateProductRequest;
+import com.team3.device.web.exception.DuplicateResourceException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -14,6 +15,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -75,5 +77,23 @@ class ProductApplicationServiceTest {
         assertEquals("Router", result.get(0).getName());
 
         verify(productRepository, times(1)).findAll();
+    }
+
+    @Test
+    void createProduct_shouldThrowException_whenNameAlreadyExists() {
+
+        // given
+        CreateProductRequest request = new CreateProductRequest();
+        request.setName("Router");
+        request.setBrand("TP_Link");
+        request.setPrice(BigDecimal.valueOf(100));
+
+        when(productRepository.existsByName("Router")).thenReturn(true);
+
+        // when + then
+        assertThrows(DuplicateResourceException.class,
+                () -> productApplicationService.createProduct(request));
+
+        verify(productRepository, times(0)).save(any(Product.class));
     }
 }

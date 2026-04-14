@@ -2,6 +2,7 @@ package com.team3.device.web.controller;
 
 import com.team3.device.application.service.ProductApplicationService;
 import com.team3.device.web.dto.ProductResponse;
+import com.team3.device.web.exception.DuplicateResourceException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -12,6 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -42,7 +44,7 @@ class ProductControllerTest {
                 1
         );
 
-        when(productApplicationService.createProduct(org.mockito.ArgumentMatchers.any()))
+        when(productApplicationService.createProduct(any()))
                 .thenReturn(response);
 
         String requestJson = """
@@ -82,5 +84,25 @@ class ProductControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(1))
                 .andExpect(jsonPath("$[0].name").value("Router"));
+    }
+
+    @Test
+    void createProduct_shouldReturnConflict_whenDuplicateName() throws Exception {
+
+        when(productApplicationService.createProduct(any()))
+                .thenThrow(new DuplicateResourceException("Product with this name already exists"));
+
+        String requestJson = """
+                {
+                    "name": "Router",
+                    "brand": "TP-Link",
+                    "price": 100
+                }
+                """;
+
+        mockMvc.perform(post("/products")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
+                .andExpect(status().isConflict());
     }
 }
