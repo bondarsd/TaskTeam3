@@ -26,4 +26,8 @@ public class ProductRepositoryImpl implements ProductRepository {
         return jpaProductRepository.findAll();
     }
 
+    @Override
+    public boolean existsByName(String name) {
+        return jpaProductRepository.existsByName(name);
+    }
 }

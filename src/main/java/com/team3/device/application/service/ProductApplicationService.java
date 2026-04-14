@@ -4,6 +4,7 @@ import com.team3.device.domain.model.Product;
 import com.team3.device.domain.repository.ProductRepository;
 import com.team3.device.web.dto.CreateProductRequest;
 import com.team3.device.web.dto.ProductResponse;
+import com.team3.device.web.exception.DuplicateResourceException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,6 +20,10 @@ public class ProductApplicationService {
     }
 
     public ProductResponse createProduct(CreateProductRequest request) {
+
+        if (productRepository.existsByName(request.getName())) {
+            throw new DuplicateResourceException("Product with this name already exists");
+        }
 
         Product product = new Product();
 

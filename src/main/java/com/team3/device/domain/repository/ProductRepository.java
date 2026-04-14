@@ -12,4 +12,5 @@ public interface ProductRepository {
 
     List<Product> findAll();
 
+    boolean existsByName(String name);
 }
