@@ -1,29 +1,27 @@
-package com.team3.device.entity;
+package com.team3.device.web.dto;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
 
-@Entity
 @Getter
 @Setter
 @NoArgsConstructor
-public class Product {
+public class CreateProductRequest {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+    @NotBlank
     private String name;
 
+    @NotBlank
     private String brand;
 
+    @NotNull
+    @Positive
     private BigDecimal price;
 
     private String wifiStandard;
@@ -35,5 +33,4 @@ public class Product {
     private Integer lanPorts;
 
     private Integer wanPorts;
-
 }
