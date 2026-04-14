@@ -25,8 +25,14 @@ public class ProductApplicationService {
             throw new DuplicateResourceException("Product with this name already exists");
         }
 
-        Product product = new Product();
+        Product product = mapToProduct(request);
 
+        Product saved = productRepository.save(product);
+        return mapToResponse(saved);
+    }
+
+    private Product mapToProduct(CreateProductRequest request) {
+        Product product = new Product();
         product.setName(request.getName());
         product.setBrand(request.getBrand());
         product.setPrice(request.getPrice());
@@ -35,9 +41,7 @@ public class ProductApplicationService {
         product.setFrequencyBand(request.getFrequencyBand());
         product.setLanPorts(request.getLanPorts());
         product.setWanPorts(request.getWanPorts());
-
-        Product saved = productRepository.save(product);
-        return mapToResponse(saved);
+        return product;
     }
 
     private ProductResponse mapToResponse(Product product) {
