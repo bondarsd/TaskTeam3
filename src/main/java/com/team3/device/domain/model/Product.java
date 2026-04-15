@@ -1,5 +1,6 @@
 package com.team3.device.domain.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -20,10 +21,13 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
     private String brand;
 
+    @Column(nullable = false)
     private BigDecimal price;
 
     private String wifiStandard;
@@ -35,5 +39,4 @@ public class Product {
     private Integer lanPorts;
 
     private Integer wanPorts;
-
 }
