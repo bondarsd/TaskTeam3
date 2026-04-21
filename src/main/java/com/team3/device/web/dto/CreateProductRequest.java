@@ -15,14 +15,14 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class CreateProductRequest {
 
-    @NotBlank
+    @NotBlank(message = "Product name is required")
     private String name;
 
-    @NotBlank
+    @NotBlank(message = "Brand is required")
     private String brand;
 
-    @NotNull
-    @Positive
+    @NotNull(message = "Price is required")
+    @Positive(message = "Price must be positive")
     private BigDecimal price;
 
     private String wifiStandard;
@@ -35,7 +35,7 @@ public class CreateProductRequest {
 
     private Integer wanPorts;
 
-    @NotNull
+    @NotNull(message = "Stock is required")
     @PositiveOrZero
     private Integer stock;
 }

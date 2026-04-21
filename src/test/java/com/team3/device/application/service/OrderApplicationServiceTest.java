@@ -123,23 +123,6 @@ class OrderApplicationServiceTest {
     }
 
     @Test
-    void createOrder_invalidQuantity_throwsException() {
-        when(customerRepository.findById(1L)).thenReturn(Optional.of(customer));
-
-        CreateOrderRequest request = new CreateOrderRequest();
-        request.setCustomerId(1L);
-
-        OrderItemRequest item = new OrderItemRequest();
-        item.setProductId(1L);
-        item.setQuantity(0); // invalid
-
-        request.setItems(List.of(item));
-
-        assertThrows(BusinessValidationException.class, () -> service.createOrder(request));
-        verify(orderRepository, never()).save(any());
-    }
-
-    @Test
     void createOrder_insufficientStock_throwsException() {
         product.setStock(1);
 
@@ -204,51 +187,11 @@ class OrderApplicationServiceTest {
     }
 
     @Test
-    void createOrder_emptyItems_throwsException() {
-        CreateOrderRequest request = new CreateOrderRequest();
-        request.setCustomerId(1L);
-        request.setItems(List.of()); // empty list
-
-        assertThrows(BusinessValidationException.class, () -> service.createOrder(request));
-
-        verify(orderRepository, never()).save(any());
-    }
-
-    @Test
-    void createOrder_nullItems_throwsException() {
-        CreateOrderRequest request = new CreateOrderRequest();
-        request.setCustomerId(1L);
-        request.setItems(null);
-
-        assertThrows(BusinessValidationException.class, () -> service.createOrder(request));
-
-        verify(orderRepository, never()).save(any());
-    }
-
-    @Test
     void getOrderById_notFound_throwsException() {
         when(orderRepository.findById(99L)).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> service.getOrderById(99L));
 
         verify(orderRepository).findById(99L);
-    }
-
-    @Test
-    void createOrder_nullQuantity_throwsException() {
-        when(customerRepository.findById(1L)).thenReturn(Optional.of(customer));
-
-        CreateOrderRequest request = new CreateOrderRequest();
-        request.setCustomerId(1L);
-
-        OrderItemRequest item = new OrderItemRequest();
-        item.setProductId(1L);
-        item.setQuantity(null); // triggers the missing branch
-
-        request.setItems(List.of(item));
-
-        assertThrows(BusinessValidationException.class, () -> service.createOrder(request));
-
-        verify(orderRepository, never()).save(any());
     }
 }

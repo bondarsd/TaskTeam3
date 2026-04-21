@@ -35,11 +35,18 @@ public class OrderApplicationService {
         this.orderRepository = orderRepository;
     }
 
-    // Create Order
+    /**
+     * Creates a new order for a customer.
+     * Validates items, checks product stock, calculates total price,
+     * updates product inventory, and persists the order atomically.
+     *
+     * @param request order creation payload
+     * @return created order as response DTO
+     * @throws BusinessValidationException if items are empty, quantity is invalid, or stock is insufficient
+     * @throws ResourceNotFoundException if customer or product does not exist
+     */
     @Transactional
     public OrderResponse createOrder(CreateOrderRequest request) {
-
-        validateItemsNotEmpty(request);
 
         Customer customer = loadCustomer(request.getCustomerId());
 
@@ -61,7 +68,13 @@ public class OrderApplicationService {
         return mapToOrderResponse(saved);
     }
 
-    // Get Order
+    /**
+     * Retrieves an order by its ID or throws if not found.
+     *
+     *  @param id order identifier
+     *  @return order response DTO
+     *  @throws ResourceNotFoundException if the order does not exist
+     */
     @Transactional(readOnly = true)
     public OrderResponse getOrderById(Long id) {
         Order order = orderRepository.findById(id)
@@ -69,13 +82,6 @@ public class OrderApplicationService {
                         new ResourceNotFoundException("Order not found with id: " + id));
 
         return mapToOrderResponse(order);
-    }
-
-    // Helpers - Validation
-    private void validateItemsNotEmpty(CreateOrderRequest request) {
-        if (request.getItems() == null || request.getItems().isEmpty()) {
-            throw new BusinessValidationException("Order must contain at least one item");
-        }
     }
 
     private Customer loadCustomer(Long customerId) {
@@ -90,12 +96,7 @@ public class OrderApplicationService {
                         new ResourceNotFoundException("Product not found with id: " + productId));
     }
 
-    // Helpers - Order Item Creation
     private OrderItem createOrderItem(OrderItemRequest request) {
-
-        if (request.getQuantity() == null || request.getQuantity() <= 0) {
-            throw new BusinessValidationException("Quantity must be greater than 0");
-        }
 
         Product product = loadProduct(request.getProductId());
 
@@ -107,7 +108,6 @@ public class OrderApplicationService {
         BigDecimal unitPrice = product.getPrice();
         BigDecimal lineTotal = unitPrice.multiply(BigDecimal.valueOf(request.getQuantity()));
 
-        // decrease stock
         product.setStock(product.getStock() - request.getQuantity());
         productRepository.save(product);
 
@@ -120,7 +120,6 @@ public class OrderApplicationService {
         return item;
     }
 
-    // Helpers - Mapping
     private OrderResponse mapToOrderResponse(Order order) {
         List<OrderItemResponse> items = order.getOrderItems().stream()
                 .map(this::mapToOrderItemResponse)

@@ -1,5 +1,6 @@
 package com.team3.device.web.dto;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -17,5 +18,6 @@ public class CreateOrderRequest {
     private Long customerId;
 
     @NotEmpty(message = "Order must contain at least one item")
+    @Valid
     private List<OrderItemRequest> items;
 }
