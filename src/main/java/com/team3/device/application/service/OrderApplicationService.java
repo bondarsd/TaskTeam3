@@ -91,33 +91,24 @@ public class OrderApplicationService {
 
     private OrderItem createOrderItem(OrderItemRequest request) {
         Product product = loadProduct(request.getProductId());
-        validateStock(product, request.getQuantity());
-
-        BigDecimal unitPrice = product.getPrice();
-        BigDecimal lineTotal = calculateLineTotal(unitPrice, request.getQuantity());
-
-        updateStock(product, request.getQuantity());
-
-        return buildOrderItem(product, request.getQuantity(), unitPrice, lineTotal);
+        updateProductStock(product, request.getQuantity());
+        return buildOrderItem(product, request.getQuantity());
     }
 
-    private void validateStock(Product product, int quantity) {
+    private void updateProductStock(Product product, int quantity) {
         if (product.getStock() < quantity) {
-            throw new BusinessValidationException(
-                    "Insufficient stock for product id: " + product.getId());
+                throw new BusinessValidationException(
+                        "Insufficient stock for product id: " + product.getId());
         }
-    }
 
-    private BigDecimal calculateLineTotal(BigDecimal unitPrice, int quantity) {
-        return unitPrice.multiply(BigDecimal.valueOf(quantity));
-    }
-
-    private void updateStock(Product product, int quantity) {
         product.setStock(product.getStock() - quantity);
         productRepository.save(product);
     }
 
-    private OrderItem buildOrderItem(Product product, int quantity, BigDecimal unitPrice, BigDecimal lineTotal) {
+    private OrderItem buildOrderItem(Product product, int quantity) {
+        BigDecimal unitPrice = product.getPrice();
+        BigDecimal lineTotal = unitPrice.multiply(BigDecimal.valueOf(quantity));
+
         OrderItem item = new OrderItem();
         item.setProduct(product);
         item.setQuantity(quantity);
