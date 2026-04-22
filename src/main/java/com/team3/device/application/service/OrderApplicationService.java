@@ -37,13 +37,13 @@ public class OrderApplicationService {
 
     /**
      * Creates a new order for a customer.
-     * Validates items, checks product stock, calculates total price,
-     * updates product inventory, and persists the order atomically.
+     * Loads customer and products, checks stock availability,
+     * calculates totals, updates inventory, and persists the order atomically.
      *
      * @param request order creation payload
      * @return created order as response DTO
-     * @throws BusinessValidationException if items are empty, quantity is invalid, or stock is insufficient
-     * @throws ResourceNotFoundException if customer or product does not exist
+     * @throws BusinessValidationException if stock is insufficient
+     * @throws ResourceNotFoundException if order, customer or product does not exist
      */
     @Transactional
     public OrderResponse createOrder(CreateOrderRequest request) {
@@ -68,13 +68,6 @@ public class OrderApplicationService {
         return mapToOrderResponse(saved);
     }
 
-    /**
-     * Retrieves an order by its ID or throws if not found.
-     *
-     *  @param id order identifier
-     *  @return order response DTO
-     *  @throws ResourceNotFoundException if the order does not exist
-     */
     @Transactional(readOnly = true)
     public OrderResponse getOrderById(Long id) {
         Order order = orderRepository.findById(id)
@@ -97,26 +90,39 @@ public class OrderApplicationService {
     }
 
     private OrderItem createOrderItem(OrderItemRequest request) {
-
         Product product = loadProduct(request.getProductId());
+        validateStock(product, request.getQuantity());
 
-        if (product.getStock() < request.getQuantity()) {
+        BigDecimal unitPrice = product.getPrice();
+        BigDecimal lineTotal = calculateLineTotal(unitPrice, request.getQuantity());
+
+        updateStock(product, request.getQuantity());
+
+        return buildOrderItem(product, request.getQuantity(), unitPrice, lineTotal);
+    }
+
+    private void validateStock(Product product, int quantity) {
+        if (product.getStock() < quantity) {
             throw new BusinessValidationException(
                     "Insufficient stock for product id: " + product.getId());
         }
+    }
 
-        BigDecimal unitPrice = product.getPrice();
-        BigDecimal lineTotal = unitPrice.multiply(BigDecimal.valueOf(request.getQuantity()));
+    private BigDecimal calculateLineTotal(BigDecimal unitPrice, int quantity) {
+        return unitPrice.multiply(BigDecimal.valueOf(quantity));
+    }
 
-        product.setStock(product.getStock() - request.getQuantity());
+    private void updateStock(Product product, int quantity) {
+        product.setStock(product.getStock() - quantity);
         productRepository.save(product);
+    }
 
+    private OrderItem buildOrderItem(Product product, int quantity, BigDecimal unitPrice, BigDecimal lineTotal) {
         OrderItem item = new OrderItem();
         item.setProduct(product);
-        item.setQuantity(request.getQuantity());
+        item.setQuantity(quantity);
         item.setUnitPrice(unitPrice);
         item.setLineTotal(lineTotal);
-
         return item;
     }
 
