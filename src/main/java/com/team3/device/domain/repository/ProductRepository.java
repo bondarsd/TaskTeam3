@@ -1,11 +1,10 @@
 package com.team3.device.domain.repository;
 
 import com.team3.device.domain.model.Product;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
-@Repository
 public interface ProductRepository {
 
     Product save(Product product);
@@ -13,4 +12,6 @@ public interface ProductRepository {
     List<Product> findAll();
 
     boolean existsByName(String name);
+
+    Optional<Product> findById(Long id);
 }

@@ -41,6 +41,7 @@ public class ProductApplicationService {
         product.setFrequencyBand(request.getFrequencyBand());
         product.setLanPorts(request.getLanPorts());
         product.setWanPorts(request.getWanPorts());
+        product.setStock(request.getStock());
         return product;
     }
 

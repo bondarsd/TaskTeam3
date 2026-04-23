@@ -6,6 +6,7 @@ import com.team3.device.domain.repository.ProductRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class ProductRepositoryImpl implements ProductRepository {
@@ -29,5 +30,10 @@ public class ProductRepositoryImpl implements ProductRepository {
     @Override
     public boolean existsByName(String name) {
         return jpaProductRepository.existsByName(name);
+    }
+
+    @Override
+    public Optional<Product> findById(Long id) {
+        return jpaProductRepository.findById(id);
     }
 }

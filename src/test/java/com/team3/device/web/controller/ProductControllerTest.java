@@ -51,7 +51,8 @@ class ProductControllerTest {
                 {
                     "name": "Router",
                     "brand": "TP-Link",
-                    "price": 100
+                    "price": 100,
+                    "stock": 10
                 }
                 """;
 
@@ -96,7 +97,8 @@ class ProductControllerTest {
                 {
                     "name": "Router",
                     "brand": "TP-Link",
-                    "price": 100
+                    "price": 100,
+                    "stock": 10
                 }
                 """;
 
